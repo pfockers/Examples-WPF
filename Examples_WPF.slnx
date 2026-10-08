@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="CustomWpfControl/CustomWpfControl.csproj" />
   <Project Path="SecurePasswordInput/SecurePasswordInput.csproj" />
+  <Project Path="AuthApi/AuthApi.csproj" />
+  <Project Path="AuthWpfClient/AuthWpfClient.csproj" />
 </Solution>

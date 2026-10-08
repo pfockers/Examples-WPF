@@ -1,0 +1,47 @@
+<Window
+    x:Class="AuthWpfClient.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Authentication and Authorization Demo"
+    Width="620"
+    Height="500"
+    MinWidth="520"
+    MinHeight="420"
+    WindowStartupLocation="CenterScreen">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock FontSize="20" FontWeight="SemiBold" Text="Sign in to the local Auth API" />
+        <TextBlock Grid.Row="1" Margin="0,16,0,4" Text="Username" />
+        <TextBox x:Name="UserNameTextBox" Grid.Row="2" Height="30" Text="reader@demo.local" />
+        <TextBlock Grid.Row="3" Margin="0,12,0,4" Text="Password" />
+        <PasswordBox x:Name="PasswordInput" Grid.Row="4" Height="30" />
+
+        <WrapPanel Grid.Row="5" Margin="0,16,0,12">
+            <Button Width="100" Margin="0,0,8,8" Click="OnSignInClick" Content="Sign in" />
+            <Button Width="100" Margin="0,0,8,8" Click="OnCurrentUserClick" Content="My access" />
+            <Button Width="110" Margin="0,0,8,8" Click="OnReadReportsClick" Content="Read reports" />
+            <Button Width="110" Margin="0,0,8,8" Click="OnManageUsersClick" Content="Manage users" />
+            <Button Width="90" Margin="0,0,8,8" Click="OnSignOutClick" Content="Sign out" />
+        </WrapPanel>
+
+        <TextBox
+            x:Name="OutputTextBox"
+            Grid.Row="6"
+            IsReadOnly="True"
+            AcceptsReturn="True"
+            FontFamily="Consolas"
+            HorizontalScrollBarVisibility="Auto"
+            Text="Start AuthApi before signing in."
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
+    </Grid>
+</Window>
