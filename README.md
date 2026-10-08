@@ -31,6 +31,14 @@ To run the authentication sample, trust the local HTTPS development certificate 
 
 The seeded passwords and JWT signing key in `AuthApi/appsettings.json` are for local demonstration only. Do not use them or the sample signing key in a deployed application; use secure secret management and an appropriate identity deployment instead.
 
+## gRPC client and backend
+
+`GrpcBackend` is an ASP.NET Core gRPC service exposing a unary `SayHello` RPC defined in `GrpcBackend/Protos/greeting.proto`. `GrpcWpfClient` compiles the same protobuf contract and calls the service over HTTPS/HTTP2.
+
+Trust the local HTTPS development certificate (`dotnet dev-certs https --trust`), start the backend with `dotnet run --project GrpcBackend/GrpcBackend.csproj`, then run the client with `dotnet run --project GrpcWpfClient/GrpcWpfClient.csproj`. The backend listens on `https://localhost:7044`.
+
+An additional Python implementation is available in `GrpcPythonBackend`. From the repository root, trust the local development certificate (`dotnet dev-certs https --trust`) and run `GrpcPythonBackend/run.cmd`. The script creates an isolated Python virtual environment, installs the gRPC packages, generates Python stubs from the shared proto, exports the dev certificate outside the repository, and starts the server at `https://localhost:7045`. In the WPF client's backend address field, use `https://localhost:7045` for Python or `https://localhost:7044` for C#.
+
 ## Run the examples
 
 Open `Examples_WPF.slnx` in Visual Studio, choose either project as the startup project, and run it on Windows with the .NET 10 SDK installed.

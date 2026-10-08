@@ -315,6 +315,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+.venv/
+GrpcPythonBackend/greeting_pb2.py
+GrpcPythonBackend/greeting_pb2_grpc.py
 
 # Cake - Uncomment if you are using it
 # tools/**
