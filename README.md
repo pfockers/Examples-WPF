@@ -6,6 +6,10 @@ This solution contains .NET 10 examples for Windows, including WPF applications 
 
 Demonstrates a reusable templated WPF control. `CustomTextControl` exposes a two-way-bindable `Text` dependency property and uses a style in `Themes/Generic.xaml` to render an editable `TextBox`. The template also uses an attached behavior to select all text when the input receives focus.
 
+## DependencyInjectionWpf
+
+Demonstrates dependency injection in WPF with `Microsoft.Extensions.Hosting`. The generic host registers an application service, viewmodel, and window; the window receives its viewmodel through constructor injection, and the viewmodel receives `IGreetingService`. Run it with `dotnet run --project DependencyInjectionWpf/DependencyInjectionWpf.csproj`.
+
 ## SecurePasswordInput
 
 Demonstrates binding a WPF `PasswordBox` to a viewmodel `SecureString` through an attached behavior, since `PasswordBox.Password` is not a bindable dependency property. The sample also converts the secure value to a regular `string` for display as `PlainPassword`; that conversion exposes the password in managed memory and is included for demonstration only, not as a recommended production practice.
