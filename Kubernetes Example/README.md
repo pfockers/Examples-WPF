@@ -54,7 +54,28 @@ Use either Docker Compose or the Kubernetes instructions below for the app; Kube
 
 ## Deploy to Kubernetes
 
-The manifests refer to `kubernetes-example:1.0.1`. Build that tag in an image store visible to your cluster. For Docker Desktop Kubernetes, this commonly means building the image locally in Docker Desktop. For a remote cluster, push the image to a registry and replace the `image` value in `k8s/deployment.yaml` with your registry path and tag.
+### 1. Start and select a cluster
+
+Start a Kubernetes cluster first. In Docker Desktop, enable Kubernetes in **Settings → Kubernetes** and wait for the cluster status to show that it is running. Check that `kubectl` is connected to the intended cluster:
+
+```powershell
+kubectl config current-context
+kubectl get nodes
+```
+
+For Docker Desktop, the context is normally `docker-desktop`. A node should report `Ready` before you continue.
+
+### 2. Make the image available
+
+The Deployment uses the image tag `kubernetes-example:1.0.1`, with `imagePullPolicy: IfNotPresent`. Build the image before applying the manifests:
+
+```powershell
+docker build -t kubernetes-example:1.0.1 .
+```
+
+Docker Desktop Kubernetes can use images built into Docker Desktop's local image store. For another local cluster, load the image into that cluster using its image-loading workflow. For a remote cluster, push the image to a registry and update the `image` value in `k8s/deployment.yaml` to the registry path and tag.
+
+### 3. Deploy and check status
 
 Apply the manifests:
 
@@ -64,14 +85,45 @@ kubectl rollout status deployment/kubernetes-example
 kubectl get pods,service -l app=kubernetes-example
 ```
 
-The Service is internal to the cluster (`ClusterIP`). Forward it to localhost to open the dashboard from your machine:
+The Deployment starts **2 replicas**. Each pod listens on container port `8080`. Kubernetes uses `/health/ready` to decide whether a pod can receive traffic and `/health/live` to detect a process that needs restarting. Resource requests are `100m` CPU and `128Mi` memory; limits are `500m` CPU and `256Mi` memory.
+
+### 4. Open the dashboard locally
+
+The Service is `ClusterIP`, so it is reachable inside the cluster but is not exposed directly on your computer or the public internet. Use `kubectl port-forward` to create a temporary local connection. Run this in its own terminal and leave that terminal open:
 
 ```powershell
-kubectl port-forward service/kubernetes-example 8080:80
+kubectl port-forward service/kubernetes-example 8082:80
 ```
 
-Browse to `http://localhost:8080/` for the dashboard, or `http://localhost:8080/health/ready` to check readiness. Remove the sample resources when finished:
+Open `http://localhost:8082/` for the dashboard. The local port `8082` forwards to Service port `80`, which routes to container port `8080`. The Docker Compose example publishes local port `8080`, so using `8082` avoids a port conflict when both examples are running.
+
+The port-forward only lasts while its command is running. Stop it with **Ctrl+C**. To check the endpoints directly, open `/health/live`, `/health/ready`, or `/weatherforecast` on the same host and port.
+
+### Scale and stop
+
+Change the number of running pods without deleting the Deployment:
+
+```powershell
+kubectl scale deployment/kubernetes-example --replicas=1
+kubectl get pods -l app=kubernetes-example
+```
+
+Scale to zero to stop the app while keeping the Kubernetes resources:
+
+```powershell
+kubectl scale deployment/kubernetes-example --replicas=0
+```
+
+Delete the Deployment and Service entirely when finished:
 
 ```powershell
 kubectl delete -f k8s/
 ```
+
+### Troubleshooting
+
+- **No current context or connection refused:** start the cluster, then check `kubectl config current-context` and `kubectl get nodes`.
+- **Pods show `ImagePullBackOff` or `ErrImagePull`:** make sure the image tag in `k8s/deployment.yaml` exists in an image store or registry accessible to the cluster.
+- **Port-forward reports that the Service has no endpoints:** check `kubectl get pods -l app=kubernetes-example` and wait for pods to become `Ready`.
+- **Local port is already in use:** choose another local port, for example `kubectl port-forward service/kubernetes-example 8084:80`, then open `http://localhost:8084/`.
+- **Docker Compose and Kubernetes at the same time:** Compose serves the app on local port `8080`; use a different local port such as `8082` for Kubernetes forwarding.
