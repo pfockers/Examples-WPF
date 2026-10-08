@@ -4,6 +4,7 @@
   <Project Path="AuthApi/AuthApi.csproj" />
   <Project Path="AuthWpfClient/AuthWpfClient.csproj" />
   <Project Path="DependencyInjectionWpf/DependencyInjectionWpf.csproj" />
+  <Project Path="ErrorHandlingLoggingWpf/ErrorHandlingLoggingWpf.csproj" />
   <Project Path="GrpcBackend/GrpcBackend.csproj" />
   <Project Path="GrpcWpfClient/GrpcWpfClient.csproj" />
 </Solution>

@@ -10,6 +10,10 @@ Demonstrates a reusable templated WPF control. `CustomTextControl` exposes a two
 
 Demonstrates dependency injection in WPF with `Microsoft.Extensions.Hosting`. The generic host registers an application service, viewmodel, and window; the window receives its viewmodel through constructor injection, and the viewmodel receives `IGreetingService`. Run it with `dotnet run --project DependencyInjectionWpf/DependencyInjectionWpf.csproj`.
 
+## ErrorHandlingLoggingWpf
+
+Demonstrates error handling and logging in a WPF application. Serilog writes daily rolling logs to `%LOCALAPPDATA%/ExamplesWpf/ErrorHandlingLoggingWpf/logs` and to Visual Studio's Debug output. The UI includes a successful operation, a handled operation failure, and an unhandled dispatcher failure; the last one is logged and shown to the user but is not suppressed. Run it with `dotnet run --project ErrorHandlingLoggingWpf/ErrorHandlingLoggingWpf.csproj`.
+
 ## SecurePasswordInput
 
 Demonstrates binding a WPF `PasswordBox` to a viewmodel `SecureString` through an attached behavior, since `PasswordBox.Password` is not a bindable dependency property. The sample also converts the secure value to a regular `string` for display as `PlainPassword`; that conversion exposes the password in managed memory and is included for demonstration only, not as a recommended production practice.
