@@ -9,7 +9,6 @@
 namespace SecurePasswordInput.ViewModels;
 
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Security;
 
 public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
@@ -35,35 +34,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             this._password?.Dispose();
             this._password = value;
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Password)));
-#if DEBUG
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.PasswordForDebugger)));
-#endif
         }
     }
-
-#if DEBUG
-    public string PasswordForDebugger
-    {
-        get
-        {
-            if (this.Password is null)
-            {
-                return string.Empty;
-            }
-
-            nint passwordPointer = Marshal.SecureStringToBSTR(this.Password);
-
-            try
-            {
-                return Marshal.PtrToStringBSTR(passwordPointer) ?? string.Empty;
-            }
-            finally
-            {
-                Marshal.ZeroFreeBSTR(passwordPointer);
-            }
-        }
-    }
-#endif
 
     #endregion
 
