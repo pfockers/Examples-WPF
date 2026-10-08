@@ -9,31 +9,31 @@
 namespace SecurePasswordInput.ViewModels;
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Security;
 
-public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
+public sealed class MainWindowViewModel : INotifyPropertyChanged
 {
-    #region Fields
-
-    private SecureString? _password;
-
-    #endregion
-
     #region Properties
 
     public SecureString? Password
     {
-        get => this._password;
+        get;
         set
         {
-            if (ReferenceEquals(this._password, value))
-            {
-                return;
-            }
-
-            this._password?.Dispose();
-            this._password = value;
+            field = value;
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Password)));
+            this.PlainPassword = ToPlainText(value);
+        }
+    }
+
+    public string? PlainPassword
+    {
+        get;
+        set
+        {
+            field = value;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.PlainPassword)));
         }
     }
 
@@ -47,10 +47,18 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
     #region Methods
 
-    public void Dispose()
+    private static string ToPlainText(SecureString secureString)
     {
-        this._password?.Dispose();
-        this._password = null;
+        nint buffer = Marshal.SecureStringToBSTR(secureString);
+
+        try
+        {
+            return Marshal.PtrToStringBSTR(buffer) ?? string.Empty;
+        }
+        finally
+        {
+            Marshal.ZeroFreeBSTR(buffer);
+        }
     }
 
     #endregion

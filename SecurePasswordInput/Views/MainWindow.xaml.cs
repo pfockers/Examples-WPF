@@ -16,25 +16,12 @@ namespace SecurePasswordInput.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Fields
-
-        private readonly MainWindowViewModel _viewModel;
-
-        #endregion
-
         #region Constructors
 
         public MainWindow()
         {
             this.InitializeComponent();
-            this._viewModel = new MainWindowViewModel();
-            this.DataContext = this._viewModel;
-            this.Closed += this.OnClosed;
-        }
-
-        private void OnClosed(object? sender, System.EventArgs e)
-        {
-            this._viewModel.Dispose();
+            this.DataContext = new MainWindowViewModel();
         }
 
         #endregion

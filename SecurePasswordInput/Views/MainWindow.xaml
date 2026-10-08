@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Passwort"
     Width="360"
-    Height="180"
+    Height="250"
     d:DataContext="{d:DesignInstance ViewModels:MainWindowViewModel}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -18,5 +18,7 @@
             Height="32"
             behaviors:PasswordBoxBinding.IsEnabled="True"
             behaviors:PasswordBoxBinding.SecurePassword="{Binding Password, Mode=TwoWay}" />
+        <TextBlock Margin="0,8,0,8" Text="PlainPasswort" />
+        <TextBox Height="32" Text="{Binding PlainPassword}" />
     </StackPanel>
 </Window>
