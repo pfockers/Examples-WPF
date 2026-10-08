@@ -1,10 +1,11 @@
 <Solution>
-  <Project Path="CustomWpfControl/CustomWpfControl.csproj" />
-  <Project Path="SecurePasswordInput/SecurePasswordInput.csproj" />
   <Project Path="AuthApi/AuthApi.csproj" />
   <Project Path="AuthWpfClient/AuthWpfClient.csproj" />
+  <Project Path="CustomWpfControl/CustomWpfControl.csproj" />
   <Project Path="DependencyInjectionWpf/DependencyInjectionWpf.csproj" />
   <Project Path="ErrorHandlingLoggingWpf/ErrorHandlingLoggingWpf.csproj" />
   <Project Path="GrpcBackend/GrpcBackend.csproj" />
   <Project Path="GrpcWpfClient/GrpcWpfClient.csproj" />
+  <Project Path="Kubernetes Example/Kubernetes Example.csproj" />
+  <Project Path="SecurePasswordInput/SecurePasswordInput.csproj" />
 </Solution>

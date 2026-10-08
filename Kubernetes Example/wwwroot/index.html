@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101412">
+  <title>Cloudcast — Kubernetes Example</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101412;
+      --panel: #191f1b;
+      --panel-raised: #202722;
+      --line: #303a33;
+      --text: #f3f5ef;
+      --muted: #9aa69d;
+      --lime: #d2fb75;
+      --mint: #8ce3bb;
+      --red: #ff8b83;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(ellipse at 88% 0%, #26372b 0, transparent 35%), var(--bg);
+    }
+    button { font: inherit; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 27px 0; border-bottom: 1px solid #ffffff12; }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; color: #182014; background: var(--lime); border-radius: 11px; font-size: 18px; }
+    .brand small { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; font-weight: 500; letter-spacing: .03em; }
+    .cluster-chip { display: flex; align-items: center; gap: 9px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 99px; color: #d9e2db; font-size: 12px; }
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px #d2fb7588; }
+    main { padding: 60px 0 72px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0 0 17px; color: var(--lime); font-size: 11px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 700px; margin: 0; font-size: clamp(42px, 7vw, 76px); line-height: .99; letter-spacing: -.065em; }
+    h1 span { color: var(--lime); }
+    .intro { max-width: 580px; margin: 22px 0 0; color: var(--muted); font-size: 16px; line-height: 1.7; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 55px 0 18px; }
+    h2 { margin: 0; font-size: 19px; letter-spacing: -.025em; }
+    .section-note { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .refresh { display: inline-flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: #ffffff05; cursor: pointer; transition: background .18s, border-color .18s; }
+    .refresh:hover { border-color: #607163; background: #ffffff0b; }
+    .refresh:disabled { cursor: wait; opacity: .65; }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .weather-card { position: relative; min-height: 196px; overflow: hidden; padding: 19px 17px; border: 1px solid var(--line); border-radius: 15px; background: linear-gradient(145deg, #202822, #171c19 72%); }
+    .weather-card:first-child { border-color: #627249; background: linear-gradient(145deg, #33402b, #20271f 72%); }
+    .weather-card::after { position: absolute; right: -28px; bottom: -52px; width: 122px; height: 122px; border: 1px solid #d2fb7512; border-radius: 50%; content: ""; }
+    .day { color: var(--muted); font-size: 12px; font-weight: 600; }
+    .weather-icon { margin: 17px 0 9px; font-size: 27px; }
+    .temperature { font-size: 33px; font-weight: 650; letter-spacing: -.055em; }
+    .summary { margin-top: 5px; color: #c0c9c1; font-size: 12px; }
+    .status-panel { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; margin-top: 43px; }
+    .status-card { display: flex; align-items: center; gap: 13px; padding: 17px; border: 1px solid var(--line); border-radius: 14px; background: #ffffff04; }
+    .status-icon { display: grid; flex: 0 0 38px; width: 38px; height: 38px; place-items: center; border-radius: 12px; color: var(--lime); background: #d2fb7514; font-size: 16px; }
+    .status-title { font-size: 12px; font-weight: 650; }
+    .status-value { margin-top: 5px; color: var(--muted); font-size: 11px; }
+    .status-value.ok { color: var(--mint); }
+    .status-value.error { color: var(--red); }
+    footer { display: flex; justify-content: space-between; gap: 16px; padding: 21px 0 28px; border-top: 1px solid #ffffff12; color: var(--muted); font-size: 11px; }
+    footer a { color: #c9d5cb; text-decoration: none; }
+    footer a:hover { color: var(--lime); }
+    .error-message { grid-column: 1 / -1; padding: 22px; border: 1px solid #ff8b8340; border-radius: 14px; color: #ffd2cf; background: #ff8b830b; }
+    @media (max-width: 850px) { .grid { grid-template-columns: repeat(3, 1fr); } .status-panel { grid-template-columns: 1fr 1fr; } .status-card:first-child { grid-column: 1 / -1; } }
+    @media (max-width: 560px) { .shell { width: min(100% - 28px, 1120px); } header { padding: 19px 0; } .cluster-chip { padding: 8px 10px; font-size: 10px; } main { padding: 45px 0 50px; } .intro { font-size: 14px; } .section-heading { align-items: center; margin-top: 42px; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; } .weather-card { min-height: 174px; padding: 15px; } .status-panel { grid-template-columns: 1fr; margin-top: 28px; } .status-card:first-child { grid-column: auto; } footer { flex-direction: column; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">☼</span><span>cloudcast<small>KUBERNETES EXAMPLE</small></span></div>
+      <div class="cluster-chip"><span class="pulse" aria-hidden="true"></span><span id="cluster-status">Checking cluster…</span></div>
+    </header>
+    <main>
+      <p class="eyebrow"><span>✳</span> A tiny forecast, served by your cluster</p>
+      <h1>Good things<br>are <span>on the horizon.</span></h1>
+      <p class="intro">A little weather dashboard for the sample API. This page and its forecast are served by the same app running in your container or Kubernetes cluster.</p>
+
+      <section aria-labelledby="forecast-heading">
+        <div class="section-heading">
+          <div><h2 id="forecast-heading">The next few days</h2><div class="section-note" id="updated-at">Getting the latest from the API…</div></div>
+          <button class="refresh" id="refresh" type="button"><span aria-hidden="true">↻</span> Refresh</button>
+        </div>
+        <div class="grid" id="forecast" aria-live="polite"></div>
+      </section>
+
+      <section class="status-panel" aria-label="API health">
+        <div class="status-card"><span class="status-icon" aria-hidden="true">⌘</span><div><div class="status-title">Kubernetes Example API</div><div class="status-value" id="api-status">Checking readiness…</div></div></div>
+        <div class="status-card"><span class="status-icon" aria-hidden="true">↗</span><div><div class="status-title">Liveness probe</div><div class="status-value" id="live-status">Checking…</div></div></div>
+        <div class="status-card"><span class="status-icon" aria-hidden="true">◎</span><div><div class="status-title">Readiness probe</div><div class="status-value" id="ready-status">Checking…</div></div></div>
+      </section>
+    </main>
+    <footer><span>Made for the Kubernetes Example project</span><span>API: <a href="/weatherforecast">forecast</a> · <a href="/health/live">live</a> · <a href="/health/ready">ready</a> · <a href="/swagger">docs</a></span></footer>
+  </div>
+  <script>
+    const forecastElement = document.querySelector("#forecast");
+    const refreshButton = document.querySelector("#refresh");
+
+    function iconFor(summary) {
+      const weather = summary.toLowerCase();
+      if (weather.includes("rain")) return "☂";
+      if (weather.includes("snow")) return "❄";
+      if (weather.includes("cloud") || weather.includes("overcast")) return "☁";
+      if (weather.includes("fog") || weather.includes("mist")) return "≋";
+      if (weather.includes("storm")) return "ϟ";
+      return "☼";
+    }
+
+    async function checkHealth(path, elementId, label) {
+      const element = document.getElementById(elementId);
+      try {
+        const response = await fetch(path, { cache: "no-store" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const result = await response.json();
+        element.textContent = result.status === "ready" ? "Ready · accepting traffic" : "Healthy · process is running";
+        element.classList.add("ok");
+        return true;
+      } catch {
+        element.textContent = label + " check failed";
+        element.classList.add("error");
+        return false;
+      }
+    }
+
+    async function loadDashboard() {
+      refreshButton.disabled = true;
+      document.querySelector("#updated-at").textContent = "Getting the latest from the API…";
+      const liveCheck = checkHealth("/health/live", "live-status", "Liveness");
+      const readyCheck = checkHealth("/health/ready", "ready-status", "Readiness");
+      try {
+        const response = await fetch("/weatherforecast", { cache: "no-store" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const forecasts = await response.json();
+        forecastElement.replaceChildren(...forecasts.map((forecast, index) => {
+          const date = new Date(forecast.date + "T12:00:00");
+          const card = document.createElement("article");
+          card.className = "weather-card";
+          const day = index === 0 ? "TOMORROW" : new Intl.DateTimeFormat(undefined, { weekday: "long" }).format(date).toUpperCase();
+          card.innerHTML = `<div class="day">${day}</div><div class="weather-icon" aria-hidden="true">${iconFor(forecast.summary || "")}</div><div class="temperature">${forecast.temperatureC}°</div><div class="summary">${forecast.summary ?? "Forecast"} <span aria-label="degrees Fahrenheit">· ${forecast.temperatureF}°F</span></div>`;
+          return card;
+        }));
+        document.querySelector("#updated-at").textContent = "Updated " + new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date());
+      } catch {
+        forecastElement.innerHTML = '<div class="error-message">Could not load the forecast. Check that the API is running, then refresh.</div>';
+        document.querySelector("#updated-at").textContent = "The API could not be reached";
+      }
+      const [live, ready] = await Promise.all([liveCheck, readyCheck]);
+      const clusterStatus = document.querySelector("#cluster-status");
+      clusterStatus.textContent = live && ready ? "All systems looking good" : "Some checks need attention";
+      document.querySelector(".pulse").style.background = live && ready ? "var(--lime)" : "var(--red)";
+      const apiStatus = document.querySelector("#api-status");
+      apiStatus.textContent = live && ready ? "Connected · serving your forecast" : "Connection needs attention";
+      apiStatus.classList.toggle("ok", live && ready);
+      apiStatus.classList.toggle("error", !(live && ready));
+      refreshButton.disabled = false;
+    }
+
+    refreshButton.addEventListener("click", loadDashboard);
+    loadDashboard();
+  </script>
+</body>
+</html>
