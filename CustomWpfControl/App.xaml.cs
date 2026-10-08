@@ -6,14 +6,13 @@
 //  writing by an officer of ROSEN. All Rights Reserved.
 // </copyright>
 
-namespace SecurePasswordInput
-{
-    using System.Windows;
+namespace CustomWpfControl;
 
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
+using System.Windows;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
+{
 }

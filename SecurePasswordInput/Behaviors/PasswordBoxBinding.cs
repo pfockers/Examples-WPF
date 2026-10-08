@@ -1,41 +1,39 @@
 using System.Security;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace SecurePasswordInput.Behaviors;
 
 public static class PasswordBoxBinding
 {
+    public static readonly DependencyProperty IsEnabledProperty =
+        DependencyProperty.RegisterAttached(
+            "IsEnabled",
+            typeof(bool),
+            typeof(PasswordBoxBinding),
+            new PropertyMetadata(false, OnIsEnabledChanged));
+
     public static readonly DependencyProperty SecurePasswordProperty =
         DependencyProperty.RegisterAttached(
             "SecurePassword",
             typeof(SecureString),
             typeof(PasswordBoxBinding),
-            new FrameworkPropertyMetadata(
-                null,
-                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                OnSecurePasswordChanged));
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-    private static readonly DependencyProperty IsUpdatingProperty =
-        DependencyProperty.RegisterAttached(
-            "IsUpdating",
-            typeof(bool),
-            typeof(PasswordBoxBinding),
-            new PropertyMetadata(false));
+    public static bool GetIsEnabled(DependencyObject dependencyObject) =>
+        (bool)dependencyObject.GetValue(IsEnabledProperty);
+
+    public static void SetIsEnabled(DependencyObject dependencyObject, bool value) =>
+        dependencyObject.SetValue(IsEnabledProperty, value);
 
     public static SecureString? GetSecurePassword(DependencyObject dependencyObject) =>
         (SecureString?)dependencyObject.GetValue(SecurePasswordProperty);
 
     public static void SetSecurePassword(DependencyObject dependencyObject, SecureString? value) =>
-        dependencyObject.SetValue(SecurePasswordProperty, value);
+        dependencyObject.SetCurrentValue(SecurePasswordProperty, value);
 
-    private static bool GetIsUpdating(DependencyObject dependencyObject) =>
-        (bool)dependencyObject.GetValue(IsUpdatingProperty);
-
-    private static void SetIsUpdating(DependencyObject dependencyObject, bool value) =>
-        dependencyObject.SetValue(IsUpdatingProperty, value);
-
-    private static void OnSecurePasswordChanged(
+    private static void OnIsEnabledChanged(
         DependencyObject dependencyObject,
         DependencyPropertyChangedEventArgs e)
     {
@@ -44,58 +42,24 @@ public static class PasswordBoxBinding
             return;
         }
 
-        passwordBox.PasswordChanged -= OnPasswordChanged;
-        passwordBox.PasswordChanged += OnPasswordChanged;
-
-        if (GetIsUpdating(passwordBox) || e.NewValue is not SecureString securePassword)
+        if ((bool)e.NewValue)
         {
-            return;
+            passwordBox.PasswordChanged += OnPasswordChanged;
         }
-
-        SetIsUpdating(passwordBox, true);
-        try
+        else
         {
-            passwordBox.Clear();
-            passwordBox.Password = ToUnsecureString(securePassword);
-        }
-        finally
-        {
-            SetIsUpdating(passwordBox, false);
+            passwordBox.PasswordChanged -= OnPasswordChanged;
         }
     }
 
     private static void OnPasswordChanged(object sender, RoutedEventArgs e)
     {
-        if (sender is not PasswordBox passwordBox || GetIsUpdating(passwordBox))
+        if (sender is not PasswordBox passwordBox)
         {
             return;
         }
 
-        SetIsUpdating(passwordBox, true);
-        try
-        {
-            SetSecurePassword(passwordBox, passwordBox.SecurePassword.Copy());
-        }
-        finally
-        {
-            SetIsUpdating(passwordBox, false);
-        }
-    }
-
-    private static string ToUnsecureString(SecureString securePassword)
-    {
-        nint pointer = nint.Zero;
-        try
-        {
-            pointer = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(securePassword);
-            return System.Runtime.InteropServices.Marshal.PtrToStringBSTR(pointer) ?? string.Empty;
-        }
-        finally
-        {
-            if (pointer != nint.Zero)
-            {
-                System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(pointer);
-            }
-        }
+        SetSecurePassword(passwordBox, passwordBox.SecurePassword.Copy());
+        BindingOperations.GetBindingExpressionBase(passwordBox, SecurePasswordProperty)?.UpdateSource();
     }
 }
