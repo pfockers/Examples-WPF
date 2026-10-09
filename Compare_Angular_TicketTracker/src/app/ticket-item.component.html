@@ -1,0 +1,15 @@
+<li class="ticket" [class]="'ticket ' + ticket.status">
+  <div class="ticket-main">
+    <span class="priority" [class]="'priority ' + ticket.priority">{{ priorityLabel[ticket.priority] }}</span>
+    <span class="title">{{ ticket.title }}</span>
+    <small>{{ ticket.createdAt | date: 'dd.MM.yyyy' }}</small>
+  </div>
+  <div class="ticket-actions">
+    <select [ngModel]="ticket.status" (ngModelChange)="statusChange.emit($event)">
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ statusLabel[s] }}</option>
+      }
+    </select>
+    <button class="danger" (click)="delete.emit()" aria-label="Loeschen">&times;</button>
+  </div>
+</li>

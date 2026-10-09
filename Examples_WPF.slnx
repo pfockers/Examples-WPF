@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="AuthApi/AuthApi.csproj" />
   <Project Path="AuthWpfClient/AuthWpfClient.csproj" />
+  <Project Path="Compare_TicketApi/Compare_TicketApi.csproj" />
   <Project Path="CustomWpfControl/CustomWpfControl.csproj" />
   <Project Path="DependencyInjectionWpf/DependencyInjectionWpf.csproj" />
   <Project Path="ErrorHandlingLoggingWpf/ErrorHandlingLoggingWpf.csproj" />

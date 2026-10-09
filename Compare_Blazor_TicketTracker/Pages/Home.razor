@@ -1,0 +1,60 @@
+﻿@page "/"
+@using Compare_Blazor_TicketTracker.Components
+@using Compare_Blazor_TicketTracker.Models
+@using Compare_Blazor_TicketTracker.Services
+@inject TicketService Service
+
+<PageTitle>Ticket Tracker</PageTitle>
+
+<div class="app">
+    <header>
+        <h1>Ticket Tracker</h1>
+        <span class="badge-tech blazor">Blazor</span>
+    </header>
+
+    @if (Service.Error != "")
+    {
+        <p class="error">@Service.Error</p>
+    }
+
+    <div class="stats">
+        @foreach (var s in TicketLabels.Statuses)
+        {
+            <div class="stat @s.Css()">
+                <strong>@Service.Count(s)</strong>
+                <span>@s.Label()</span>
+            </div>
+        }
+    </div>
+
+    <TicketForm />
+
+    <div class="toolbar">
+        <input type="search" placeholder="Tickets durchsuchen..." @bind="Service.Search" @bind:event="oninput" />
+        <select @bind="Service.Filter">
+            <option value="all">Alle</option>
+            @foreach (var s in TicketLabels.Statuses)
+            {
+                <option value="@s">@s.Label()</option>
+            }
+        </select>
+    </div>
+
+    <ul class="tickets">
+        @foreach (var t in Service.Visible)
+        {
+            <TicketItem @key="t.Id" Ticket="t"
+                        OnStatusChange="status => Service.ChangeStatusAsync(t.Id, status)"
+                        OnDelete="() => Service.RemoveAsync(t.Id)" />
+        }
+    </ul>
+    @if (Service.VisibleCount == 0)
+    {
+        <p class="empty">Keine Tickets gefunden.</p>
+    }
+</div>
+
+@code {
+    // Lifecycle-Methode (Gegenstueck zu useEffect/ngOnInit): einmal beim Start laden.
+    protected override Task OnInitializedAsync() => Service.LoadAsync();
+}

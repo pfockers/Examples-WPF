@@ -1,0 +1,26 @@
+@using Compare_Blazor_TicketTracker.Models
+@using Compare_Blazor_TicketTracker.Services
+@inject TicketService Service
+
+<form class="form" @onsubmit="SubmitAsync">
+    <input @bind="_title" @bind:event="oninput" placeholder="Neues Ticket..." />
+    <select @bind="_priority">
+        @foreach (var p in TicketLabels.Priorities)
+        {
+            <option value="@p">@p.Label()</option>
+        }
+    </select>
+    <button type="submit" class="primary" disabled="@string.IsNullOrWhiteSpace(_title)">Hinzufuegen</button>
+</form>
+
+@code {
+    private string _title = "";
+    private Priority _priority = Priority.Medium;
+
+    private async Task SubmitAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_title)) return;
+        await Service.AddAsync(_title.Trim(), _priority);
+        _title = "";
+    }
+}

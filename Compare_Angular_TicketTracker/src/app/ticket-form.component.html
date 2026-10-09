@@ -1,0 +1,9 @@
+<form class="form" (ngSubmit)="submit()">
+  <input name="title" [(ngModel)]="title" placeholder="Neues Ticket..." />
+  <select name="priority" [(ngModel)]="priority">
+    @for (p of priorities; track p) {
+      <option [value]="p">{{ label[p] }}</option>
+    }
+  </select>
+  <button type="submit" class="primary" [disabled]="!title.trim()">Hinzufuegen</button>
+</form>
