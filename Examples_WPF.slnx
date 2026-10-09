@@ -8,4 +8,5 @@
   <Project Path="GrpcWpfClient/GrpcWpfClient.csproj" />
   <Project Path="Kubernetes Example/Kubernetes Example.csproj" />
   <Project Path="SecurePasswordInput/SecurePasswordInput.csproj" />
+  <Project Path="SecurityVulnerabilityDashboard/SecurityVulnerabilityDashboard.csproj" />
 </Solution>

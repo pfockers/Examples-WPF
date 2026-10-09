@@ -43,6 +43,10 @@ Trust the local HTTPS development certificate (`dotnet dev-certs https --trust`)
 
 An additional Python implementation is available in `GrpcPythonBackend`. From the repository root, trust the local development certificate (`dotnet dev-certs https --trust`) and run `GrpcPythonBackend/run.cmd`. The script creates an isolated Python virtual environment, installs the gRPC packages, generates Python stubs from the shared proto, exports the dev certificate outside the repository, and starts the server at `https://localhost:7045`. In the WPF client's backend address field, use `https://localhost:7045` for Python or `https://localhost:7044` for C#.
 
+## SecurityVulnerabilityDashboard
+
+Scans a selected `.sln`, `.slnx`, or `.csproj` for NuGet advisories using the .NET CLI and scans C# source with Roslyn for selected patterns: weak cryptography, `BinaryFormatter`, hard-coded strings assigned to sensitive-looking names, and interpolated/concatenated raw SQL. Findings include severity, rule ID, file/package, and line when available. The `VulnerabilityExamples` folder contains intentionally insecure patterns and safer alternatives for learning; the vulnerable samples are excluded from compilation but are included in source scans. Do not use or copy the intentionally vulnerable code into applications. The source checks are heuristic and may produce false positives; this educational sample is not a replacement for a maintained SAST tool or security review. NuGet scanning may restore packages and needs advisory data from configured package sources. Run it with `dotnet run --project SecurityVulnerabilityDashboard/SecurityVulnerabilityDashboard.csproj` and scan `SecurityVulnerabilityDashboard.csproj` to see the examples detected.
+
 ## Run the examples
 
 Open `Examples_WPF.slnx` in Visual Studio, choose either project as the startup project, and run it on Windows with the .NET 10 SDK installed.
