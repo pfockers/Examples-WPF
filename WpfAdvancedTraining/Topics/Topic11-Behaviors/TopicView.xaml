@@ -1,5 +1,29 @@
 <UserControl x:Class="WpfAdvancedTraining.Topics.Topic11Behaviors.TopicView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:behaviors="clr-namespace:WpfAdvancedTraining.Behaviors" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-    <Grid Margin="12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions><TextBlock Margin="0,0,0,8" TextWrapping="Wrap" Text="Double-click a user row. The attached behavior forwards the row data context to OpenDetailsCommand without code-behind in this view."/><ListBox Grid.Row="1" ItemsSource="{Binding Users}" behaviors:EventToCommandBehavior.DoubleClickCommand="{Binding OpenDetailsCommand}"><ListBox.ItemTemplate><DataTemplate><TextBlock Padding="5" Text="{Binding Name}"/></DataTemplate></ListBox.ItemTemplate></ListBox></Grid>
+             xmlns:behaviors="clr-namespace:WpfAdvancedTraining.Behaviors"
+             xmlns:views="clr-namespace:WpfAdvancedTraining.Views"
+             xmlns:viewModels="clr-namespace:WpfAdvancedTraining.ViewModels">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewModels:DemoPageViewModel}">
+            <views:DemoPageView />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Margin="0,0,0,8" TextWrapping="Wrap"
+                   Text="Double-click a user row. The attached behavior forwards only the clicked ListBoxItem's data object to the command; double-clicking empty space does nothing." />
+        <ListBox Grid.Row="1" ItemsSource="{Binding Users}"
+                 behaviors:EventToCommandBehavior.DoubleClickCommand="{Binding OpenDetailsCommand}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Padding="5" Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ContentControl Grid.Row="2" Margin="0,10,0,0" Content="{Binding CurrentView}" />
+    </Grid>
 </UserControl>

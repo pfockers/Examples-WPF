@@ -1,5 +1,39 @@
-<UserControl x:Class="WpfAdvancedTraining.Topics.Topic03DataTriggers.TopicView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-    <UserControl.Resources><Style x:Key="LockedUserTextStyle" TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/><Setter Property="FontStyle" Value="Normal"/><Style.Triggers><DataTrigger Binding="{Binding IsLocked}" Value="True"><Setter Property="Foreground" Value="#FFD84A4A"/><Setter Property="FontStyle" Value="Italic"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger></Style.Triggers></Style></UserControl.Resources>
-    <StackPanel Margin="12"><TextBlock Margin="0,0,0,10" TextWrapping="Wrap" Text="A DataTrigger reacts to IsLocked without code-behind. Choose a user and toggle the state: IsLocked=True makes the name red and italic."/><ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" DisplayMemberPath="Name"/><StackPanel Margin="0,8,0,0" Orientation="Horizontal"><TextBlock VerticalAlignment="Center" Text="Selected: "/><TextBlock VerticalAlignment="Center" Style="{StaticResource LockedUserTextStyle}" Text="{Binding SelectedUser.Name}"/><Button Content="Toggle lock" Command="{Binding LockUserCommand}" CommandParameter="{Binding SelectedUser}"/></StackPanel></StackPanel>
+<UserControl
+    x:Class="WpfAdvancedTraining.Topics.Topic03DataTriggers.TopicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="LockedUserTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedUser.IsLocked}" Value="True">
+                    <Setter Property="Foreground" Value="#FFD84A4A" />
+                    <Setter Property="FontStyle" Value="Italic" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Margin="12">
+        <TextBlock
+            Margin="0,0,0,10"
+            Text="A DataTrigger reacts to IsLocked without code-behind. Choose a user and toggle the state: IsLocked=True makes the name red and italic."
+            TextWrapping="Wrap" />
+        <ListBox
+            DisplayMemberPath="Name"
+            ItemsSource="{Binding Users}"
+            SelectedItem="{Binding SelectedUser}" />
+        <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Text="Selected: " />
+            <TextBlock
+                VerticalAlignment="Center"
+                Style="{StaticResource LockedUserTextStyle}"
+                Text="{Binding SelectedUser.Name}" />
+            <Button
+                Command="{Binding LockUserCommand}"
+                CommandParameter="{Binding SelectedUser}"
+                Content="Toggle lock" />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

@@ -1,4 +1,23 @@
-<UserControl x:Class="WpfAdvancedTraining.Topics.Topic09Validation.TopicView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-    <StackPanel Margin="12" MaxWidth="440" HorizontalAlignment="Left"><TextBlock Margin="0,0,0,8" TextWrapping="Wrap" Text="INotifyDataErrorInfo validates properties as they change. Enter a name and valid email to enable Add; invalid input keeps it disabled."/><TextBlock Text="Name"/><TextBox Text="{Binding Editor.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/><TextBlock Text="Email"/><TextBox Text="{Binding Editor.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/><Button Width="160" HorizontalAlignment="Left" Content="Add validated user" Command="{Binding AddValidatedUserCommand}"/></StackPanel>
+<UserControl
+    x:Class="WpfAdvancedTraining.Topics.Topic09Validation.TopicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel
+        MaxWidth="440"
+        Margin="12"
+        HorizontalAlignment="Left">
+        <TextBlock
+            Margin="0,0,0,8"
+            Text="INotifyDataErrorInfo validates properties as they change. Enter a name and valid email to enable Add; invalid input keeps it disabled."
+            TextWrapping="Wrap" />
+        <TextBlock Text="Name" />
+        <TextBox Text="{Binding Editor.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+        <TextBlock Text="Email" />
+        <TextBox Text="{Binding Editor.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+        <Button
+            Width="160"
+            HorizontalAlignment="Left"
+            Command="{Binding AddValidatedUserCommand}"
+            Content="Add validated user" />
+    </StackPanel>
 </UserControl>

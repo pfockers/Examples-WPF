@@ -25,20 +25,20 @@
     WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <selectors:TopicContentTemplateSelector x:Key="TopicContentTemplateSelector" />
-        <DataTemplate x:Key="TemplatesTopic"><topic01:TopicView /></DataTemplate>
-        <DataTemplate x:Key="StylesTopic"><topic02:TopicView /></DataTemplate>
-        <DataTemplate x:Key="DataTriggersTopic"><topic03:TopicView /></DataTemplate>
-        <DataTemplate x:Key="AttachedPropertiesTopic"><topic04:TopicView /></DataTemplate>
-        <DataTemplate x:Key="CommandsTopic"><topic05:TopicView /></DataTemplate>
-        <DataTemplate x:Key="CollectionViewTopic"><topic06:TopicView /></DataTemplate>
-        <DataTemplate x:Key="ConvertersTopic"><topic07:TopicView /></DataTemplate>
-        <DataTemplate x:Key="AsyncLoadingTopic"><topic08:TopicView /></DataTemplate>
-        <DataTemplate x:Key="ValidationTopic"><topic09:TopicView /></DataTemplate>
-        <DataTemplate x:Key="NavigationTopic"><topic10:TopicView /></DataTemplate>
-        <DataTemplate x:Key="BehaviorsTopic"><topic11:TopicView /></DataTemplate>
-        <DataTemplate x:Key="VirtualizationTopic"><topic12:TopicView /></DataTemplate>
-        <DataTemplate x:Key="DependencyPropertiesTopic"><topic13:TopicView /></DataTemplate>
-        <DataTemplate x:Key="ResourceDictionariesTopic"><topic14:TopicView /></DataTemplate>
+        <DataTemplate x:Key="TemplatesTopic"><topic01:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="StylesTopic"><topic02:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="DataTriggersTopic"><topic03:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="AttachedPropertiesTopic"><topic04:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="CommandsTopic"><topic05:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="CollectionViewTopic"><topic06:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="ConvertersTopic"><topic07:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="AsyncLoadingTopic"><topic08:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="ValidationTopic"><topic09:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="NavigationTopic"><topic10:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="BehaviorsTopic"><topic11:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="VirtualizationTopic"><topic12:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="DependencyPropertiesTopic"><topic13:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
+        <DataTemplate x:Key="ResourceDictionariesTopic"><topic14:TopicView DataContext="{Binding ViewModel}" /></DataTemplate>
     </Window.Resources>
     <DockPanel Margin="16">
         <Border DockPanel.Dock="Top" Margin="0,0,0,12" Padding="14"

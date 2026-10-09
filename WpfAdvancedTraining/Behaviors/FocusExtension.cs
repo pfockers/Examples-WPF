@@ -5,38 +5,35 @@ namespace WpfAdvancedTraining.Behaviors;
 
 public static class FocusExtension
 {
-    public static readonly DependencyProperty IsFocusedProperty =
+    public static readonly DependencyProperty FocusRequestProperty =
         DependencyProperty.RegisterAttached(
-            "IsFocused",
-            typeof(bool),
+            "FocusRequest",
+            typeof(int),
             typeof(FocusExtension),
-            new PropertyMetadata(false, OnIsFocusedChanged));
+            new PropertyMetadata(0, OnFocusRequestChanged));
 
-    public static bool GetIsFocused(DependencyObject element) =>
-        (bool)element.GetValue(IsFocusedProperty);
+    public static int GetFocusRequest(DependencyObject element) =>
+        (int)element.GetValue(FocusRequestProperty);
 
-    public static void SetIsFocused(DependencyObject element, bool value) =>
-        element.SetValue(IsFocusedProperty, value);
+    public static void SetFocusRequest(DependencyObject element, int value) =>
+        element.SetValue(FocusRequestProperty, value);
 
-    private static void OnIsFocusedChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    private static void OnFocusRequestChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
-        if (dependencyObject is not FrameworkElement element)
+        if (dependencyObject is not FrameworkElement element || Equals(e.OldValue, e.NewValue))
         {
             return;
         }
 
         element.Loaded -= OnElementLoaded;
-        if (e.NewValue is true)
+        element.Unloaded -= OnElementUnloaded;
+        if (element.IsLoaded)
         {
-            if (element.IsLoaded)
-            {
-                element.Focus();
-                Keyboard.Focus(element);
-            }
-            else
-            {
-                element.Loaded += OnElementLoaded;
-            }
+            Focus(element);
+        }
+        else
+        {
+            element.Loaded += OnElementLoaded;
         }
     }
 
@@ -45,8 +42,31 @@ public static class FocusExtension
         if (sender is FrameworkElement element)
         {
             element.Loaded -= OnElementLoaded;
-            element.Focus();
-            Keyboard.Focus(element);
+            Focus(element);
         }
+    }
+
+    private static void OnElementUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element)
+        {
+            element.Loaded -= OnElementLoaded;
+            element.Unloaded -= OnElementUnloaded;
+        }
+    }
+
+    private static void Focus(FrameworkElement element)
+    {
+        element.Loaded -= OnElementLoaded;
+        element.Unloaded -= OnElementUnloaded;
+        element.Unloaded += OnElementUnloaded;
+        element.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            if (element.IsLoaded && element.Focusable && element.IsVisible && element.IsEnabled)
+            {
+                element.Focus();
+                Keyboard.Focus(element);
+            }
+        }), System.Windows.Threading.DispatcherPriority.Input);
     }
 }

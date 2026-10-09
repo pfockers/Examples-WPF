@@ -2,8 +2,7 @@
     x:Class="WpfAdvancedTraining.Topics.Topic08AsyncLoading.TopicView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:WpfAdvancedTraining.Converters"
-    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+    xmlns:converters="clr-namespace:WpfAdvancedTraining.Converters">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>

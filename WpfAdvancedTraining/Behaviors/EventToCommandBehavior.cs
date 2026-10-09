@@ -26,10 +26,22 @@ public static class EventToCommandBehavior
             return;
         }
 
-        listBox.MouseDoubleClick -= OnMouseDoubleClick;
+        if (e.OldValue is not null)
+        {
+            listBox.MouseDoubleClick -= OnMouseDoubleClick;
+            listBox.Loaded -= OnListBoxLoaded;
+            listBox.Unloaded -= OnListBoxUnloaded;
+        }
+
         if (e.NewValue is ICommand)
         {
-            listBox.MouseDoubleClick += OnMouseDoubleClick;
+            if (listBox.IsLoaded)
+            {
+                listBox.MouseDoubleClick += OnMouseDoubleClick;
+            }
+
+            listBox.Loaded += OnListBoxLoaded;
+            listBox.Unloaded += OnListBoxUnloaded;
         }
     }
 
@@ -40,11 +52,34 @@ public static class EventToCommandBehavior
             return;
         }
 
-        var parameter = (e.OriginalSource as FrameworkElement)?.DataContext ?? listBox.SelectedItem;
+        var item = ItemsControl.ContainerFromElement(listBox, e.OriginalSource as DependencyObject) as ListBoxItem;
+        if (item is null)
+        {
+            return;
+        }
+
+        var parameter = item.DataContext;
         var command = GetDoubleClickCommand(listBox);
         if (command?.CanExecute(parameter) == true)
         {
             command.Execute(parameter);
+        }
+    }
+
+    private static void OnListBoxUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListBox listBox)
+        {
+            listBox.MouseDoubleClick -= OnMouseDoubleClick;
+        }
+    }
+
+    private static void OnListBoxLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListBox listBox && GetDoubleClickCommand(listBox) is not null)
+        {
+            listBox.MouseDoubleClick -= OnMouseDoubleClick;
+            listBox.MouseDoubleClick += OnMouseDoubleClick;
         }
     }
 }

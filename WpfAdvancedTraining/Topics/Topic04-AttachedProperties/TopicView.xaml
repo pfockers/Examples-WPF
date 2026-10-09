@@ -1,5 +1,33 @@
-<UserControl x:Class="WpfAdvancedTraining.Topics.Topic04AttachedProperties.TopicView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:behaviors="clr-namespace:WpfAdvancedTraining.Behaviors" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-    <StackPanel Margin="12"><TextBlock Margin="0,0,0,8" TextWrapping="Wrap" Text="The attached IsFocused property focuses this first TextBox when the view loads. The second field has no attached property."/><TextBox Width="320" HorizontalAlignment="Left" Text="Focus is set from an attached property" behaviors:FocusExtension.IsFocused="True"/></StackPanel>
+<UserControl
+    x:Class="WpfAdvancedTraining.Topics.Topic04AttachedProperties.TopicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:WpfAdvancedTraining.Behaviors">
+    <StackPanel Margin="12">
+        <TextBlock
+            Margin="0,0,0,8"
+            Text="FocusRequest is an attached property that turns a viewmodel value into a repeatable focus request. Click the button more than once to try it."
+            TextWrapping="Wrap" />
+        <TextBox
+            Width="320"
+            HorizontalAlignment="Left"
+            behaviors:FocusExtension.FocusRequest="{Binding FocusRequest}"
+            Text="Click Request focus to focus here" />
+        <Button
+            Width="140"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Left"
+            Command="{Binding RequestFocusCommand}"
+            CommandParameter="{Binding}"
+            Content="Request focus" />
+        <TextBlock Margin="0,8,0,0" Text="A second field remains available for comparison." />
+        <TextBox
+            Width="320"
+            HorizontalAlignment="Left"
+            Text="Focus me manually" />
+        <TextBlock
+            Margin="0,10,0,0"
+            FontFamily="Consolas"
+            Text="FocusExtension.FocusRequest = 1, 2, 3…" />
+    </StackPanel>
 </UserControl>
