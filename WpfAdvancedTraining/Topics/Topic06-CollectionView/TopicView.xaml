@@ -1,0 +1,4 @@
+<UserControl x:Class="WpfAdvancedTraining.Topics.Topic06CollectionView.TopicView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+    <Grid Margin="12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions><StackPanel Margin="0,0,0,8"><TextBlock Margin="0,0,0,5" TextWrapping="Wrap" Text="Type a name, email, or role. The view sorts by name and groups by role without changing the source collection. Try admin, Mia, or example.com."/><TextBox Width="320" HorizontalAlignment="Left" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/></StackPanel><ListBox Grid.Row="1" ItemsSource="{Binding UsersView}" DisplayMemberPath="Name"/></Grid>
+</UserControl>

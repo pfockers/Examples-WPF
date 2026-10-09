@@ -47,6 +47,11 @@ An additional Python implementation is available in `GrpcPythonBackend`. From th
 
 Scans a selected `.sln`, `.slnx`, or `.csproj` for NuGet advisories using the .NET CLI and scans C# source with Roslyn for selected patterns: weak cryptography, `BinaryFormatter`, hard-coded strings assigned to sensitive-looking names, and interpolated/concatenated raw SQL. Findings include severity, rule ID, file/package, and line when available. The `VulnerabilityExamples` folder contains intentionally insecure patterns and safer alternatives for learning; the vulnerable samples are excluded from compilation but are included in source scans. Do not use or copy the intentionally vulnerable code into applications. The source checks are heuristic and may produce false positives; this educational sample is not a replacement for a maintained SAST tool or security review. NuGet scanning may restore packages and needs advisory data from configured package sources. Run it with `dotnet run --project SecurityVulnerabilityDashboard/SecurityVulnerabilityDashboard.csproj` and scan `SecurityVulnerabilityDashboard.csproj` to see the examples detected.
 
+## WpfAdvancedTraining
+
+A single interactive WPF training application with 14 tabs demonstrating DataTemplates and template selection, styles and ControlTemplates, DataTriggers, attached properties, parameterized commands, CollectionView filtering/sorting/grouping, value and multivalue converters, asynchronous loading, INotifyDataErrorInfo validation, ContentControl navigation, event-to-command behaviors, list virtualization, dependency properties, and runtime theme dictionaries. The examples share a small user-management domain and are intended for hands-on learning.
+
+Run it on Windows with the .NET 10 SDK using `dotnet run --project WpfAdvancedTraining/WpfAdvancedTraining.csproj`, or choose **WpfAdvancedTraining** as the startup project in Visual Studio.
 ## Run the examples
 
 Open `Examples_WPF.slnx` in Visual Studio, choose either project as the startup project, and run it on Windows with the .NET 10 SDK installed.

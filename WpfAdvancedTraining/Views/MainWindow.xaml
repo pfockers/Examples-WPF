@@ -1,0 +1,78 @@
+<Window
+    x:Class="WpfAdvancedTraining.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:selectors="clr-namespace:WpfAdvancedTraining.Selectors"
+    xmlns:topic01="clr-namespace:WpfAdvancedTraining.Topics.Topic01Templates"
+    xmlns:topic02="clr-namespace:WpfAdvancedTraining.Topics.Topic02StylesControlTemplates"
+    xmlns:topic03="clr-namespace:WpfAdvancedTraining.Topics.Topic03DataTriggers"
+    xmlns:topic04="clr-namespace:WpfAdvancedTraining.Topics.Topic04AttachedProperties"
+    xmlns:topic05="clr-namespace:WpfAdvancedTraining.Topics.Topic05Commands"
+    xmlns:topic06="clr-namespace:WpfAdvancedTraining.Topics.Topic06CollectionView"
+    xmlns:topic07="clr-namespace:WpfAdvancedTraining.Topics.Topic07Converters"
+    xmlns:topic08="clr-namespace:WpfAdvancedTraining.Topics.Topic08AsyncLoading"
+    xmlns:topic09="clr-namespace:WpfAdvancedTraining.Topics.Topic09Validation"
+    xmlns:topic10="clr-namespace:WpfAdvancedTraining.Topics.Topic10Navigation"
+    xmlns:topic11="clr-namespace:WpfAdvancedTraining.Topics.Topic11Behaviors"
+    xmlns:topic12="clr-namespace:WpfAdvancedTraining.Topics.Topic12Virtualization"
+    xmlns:topic13="clr-namespace:WpfAdvancedTraining.Topics.Topic13DependencyProperties"
+    xmlns:topic14="clr-namespace:WpfAdvancedTraining.Topics.Topic14ResourceDictionaries"
+    Title="Advanced WPF Training"
+    Width="1180"
+    Height="780"
+    MinWidth="940"
+    MinHeight="620"
+    WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <selectors:TopicContentTemplateSelector x:Key="TopicContentTemplateSelector" />
+        <DataTemplate x:Key="TemplatesTopic"><topic01:TopicView /></DataTemplate>
+        <DataTemplate x:Key="StylesTopic"><topic02:TopicView /></DataTemplate>
+        <DataTemplate x:Key="DataTriggersTopic"><topic03:TopicView /></DataTemplate>
+        <DataTemplate x:Key="AttachedPropertiesTopic"><topic04:TopicView /></DataTemplate>
+        <DataTemplate x:Key="CommandsTopic"><topic05:TopicView /></DataTemplate>
+        <DataTemplate x:Key="CollectionViewTopic"><topic06:TopicView /></DataTemplate>
+        <DataTemplate x:Key="ConvertersTopic"><topic07:TopicView /></DataTemplate>
+        <DataTemplate x:Key="AsyncLoadingTopic"><topic08:TopicView /></DataTemplate>
+        <DataTemplate x:Key="ValidationTopic"><topic09:TopicView /></DataTemplate>
+        <DataTemplate x:Key="NavigationTopic"><topic10:TopicView /></DataTemplate>
+        <DataTemplate x:Key="BehaviorsTopic"><topic11:TopicView /></DataTemplate>
+        <DataTemplate x:Key="VirtualizationTopic"><topic12:TopicView /></DataTemplate>
+        <DataTemplate x:Key="DependencyPropertiesTopic"><topic13:TopicView /></DataTemplate>
+        <DataTemplate x:Key="ResourceDictionariesTopic"><topic14:TopicView /></DataTemplate>
+    </Window.Resources>
+    <DockPanel Margin="16">
+        <Border DockPanel.Dock="Top" Margin="0,0,0,12" Padding="14"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock FontSize="24" FontWeight="Bold" Text="Advanced WPF Training" />
+                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource MutedForegroundBrush}"
+                               Text="14 topics in separate folders with independent views" />
+                </StackPanel>
+                <CheckBox Grid.Column="1" VerticalAlignment="Center" Content="Dark theme"
+                          IsChecked="{Binding IsDarkTheme}" />
+            </Grid>
+        </Border>
+        <TextBlock DockPanel.Dock="Bottom" Margin="0,10,0,0" Foreground="{DynamicResource MutedForegroundBrush}"
+                   Text="{Binding StatusMessage}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ListBox Grid.Column="0" ItemsSource="{Binding Topics}" SelectedItem="{Binding SelectedTopic}"
+                     DisplayMemberPath="Title" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+            <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+                <ContentControl Content="{Binding SelectedTopic}"
+                                ContentTemplateSelector="{StaticResource TopicContentTemplateSelector}" />
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>
