@@ -1,9 +1,22 @@
-<form class="form" (ngSubmit)="submit()">
-  <input name="title" [(ngModel)]="title" placeholder="Neues Ticket..." />
-  <select name="priority" [(ngModel)]="priority">
+<form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="field">
+    <input formControlName="title" placeholder="Neues Ticket..." />
+    @if (title.invalid && (title.touched || submitted)) {
+      <span class="field-error">
+        @if (title.errors?.['required'] || title.errors?.['pattern']) {
+          Titel ist erforderlich.
+        } @else if (title.errors?.['minlength']) {
+          Titel muss mindestens 3 Zeichen lang sein.
+        } @else if (title.errors?.['maxlength']) {
+          Titel darf hoechstens 200 Zeichen lang sein.
+        }
+      </span>
+    }
+  </div>
+  <select formControlName="priority">
     @for (p of priorities; track p) {
       <option [value]="p">{{ label[p] }}</option>
     }
   </select>
-  <button type="submit" class="primary" [disabled]="!title.trim()">Hinzufuegen</button>
+  <button type="submit" class="primary" [disabled]="busy">{{ busy ? 'Speichern...' : 'Hinzufuegen' }}</button>
 </form>

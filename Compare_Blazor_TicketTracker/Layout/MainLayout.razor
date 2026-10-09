@@ -1,3 +1,31 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject AuthService Auth
 
-@Body
+<div class="app">
+    <header>
+        <h1><a href="">Ticket Tracker</a></h1>
+        <div class="header-right">
+            @if (Auth.IsLoggedIn)
+            {
+                <span class="user">@Auth.Username</span>
+                <button @onclick="Auth.LogoutAsync">Abmelden</button>
+            }
+            <span class="badge-tech blazor">Blazor</span>
+        </div>
+    </header>
+
+    @Body
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        Auth.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Auth.Changed -= OnChanged;
+}

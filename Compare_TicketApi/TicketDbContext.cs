@@ -12,6 +12,7 @@ public class TicketDbContext(DbContextOptions<TicketDbContext> options) : DbCont
         modelBuilder.Entity<Ticket>(e =>
         {
             e.Property(t => t.Title).HasMaxLength(200).IsRequired();
+            e.Property(t => t.Description).HasMaxLength(1000);
             e.Property(t => t.Priority).HasConversion<string>();
             e.Property(t => t.Status).HasConversion<string>();
         });

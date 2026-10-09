@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-api",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}/Compare_TicketApi/Compare_TicketApi.csproj"],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "run-api",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}/Compare_TicketApi"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "group": "servers" }
+    },
+    {
+      "label": "run-react",
+      "type": "shell",
+      "command": "npm run dev -- --port 5173",
+      "options": { "cwd": "${workspaceFolder}/Compare_React_TicketTracker" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "group": "servers" }
+    },
+    {
+      "label": "run-angular",
+      "type": "shell",
+      "command": "npx ng serve --port 4200",
+      "options": { "cwd": "${workspaceFolder}/Compare_Angular_TicketTracker" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "group": "servers" }
+    },
+    {
+      "label": "run-blazor",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}/Compare_Blazor_TicketTracker", "--urls", "http://localhost:5200"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "group": "servers" }
+    },
+    {
+      "label": "Start all (API + React + Angular + Blazor)",
+      "dependsOn": ["run-api", "run-react", "run-angular", "run-blazor"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test all",
+      "dependsOn": ["test-api", "test-blazor", "test-react", "test-angular"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "test-api",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["test", "${workspaceFolder}/Compare_TicketApi.Tests"],
+      "problemMatcher": "$msCompile",
+      "group": "test"
+    },
+    {
+      "label": "test-blazor",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["test", "${workspaceFolder}/Compare_Blazor_TicketTracker.Tests"],
+      "problemMatcher": "$msCompile",
+      "group": "test"
+    },
+    {
+      "label": "test-react",
+      "type": "shell",
+      "command": "npm test",
+      "options": { "cwd": "${workspaceFolder}/Compare_React_TicketTracker" },
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "test-angular",
+      "type": "shell",
+      "command": "npx ng test --watch=false --browsers=ChromeHeadless",
+      "options": { "cwd": "${workspaceFolder}/Compare_Angular_TicketTracker" },
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ]
+}

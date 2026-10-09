@@ -1,26 +1,40 @@
 @using Compare_Blazor_TicketTracker.Models
-@using Compare_Blazor_TicketTracker.Services
-@inject TicketService Service
 
-<form class="form" @onsubmit="SubmitAsync">
-    <input @bind="_title" @bind:event="oninput" placeholder="Neues Ticket..." />
-    <select @bind="_priority">
+<EditForm Model="_model" OnValidSubmit="SubmitAsync" class="form" FormName="ticket-form">
+    <DataAnnotationsValidator />
+    <div class="field">
+        <InputText @bind-Value="_model.Title" placeholder="Neues Ticket..." />
+        <ValidationMessage For="() => _model.Title" />
+    </div>
+    <InputSelect @bind-Value="_model.Priority">
         @foreach (var p in TicketLabels.Priorities)
         {
             <option value="@p">@p.Label()</option>
         }
-    </select>
-    <button type="submit" class="primary" disabled="@string.IsNullOrWhiteSpace(_title)">Hinzufuegen</button>
-</form>
+    </InputSelect>
+    <button type="submit" class="primary" disabled="@_busy">@(_busy ? "Speichern..." : "Hinzufuegen")</button>
+</EditForm>
 
 @code {
-    private string _title = "";
-    private Priority _priority = Priority.Medium;
+    // EventCallback entspricht dem onAdd-Prop in React bzw. @Output in Angular.
+    [Parameter] public EventCallback<TicketInput> OnAdd { get; set; }
 
+    private TicketInput _model = new();
+    private bool _busy;
+
+    // OnValidSubmit wird nur aufgerufen, wenn alle DataAnnotations erfuellt sind.
     private async Task SubmitAsync()
     {
-        if (string.IsNullOrWhiteSpace(_title)) return;
-        await Service.AddAsync(_title.Trim(), _priority);
-        _title = "";
+        _busy = true;
+        try
+        {
+            _model.Title = _model.Title.Trim();
+            await OnAdd.InvokeAsync(_model);
+            _model = new TicketInput { Priority = _model.Priority };
+        }
+        finally
+        {
+            _busy = false;
+        }
     }
 }

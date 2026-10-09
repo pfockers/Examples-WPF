@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API (.NET)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/Compare_TicketApi/bin/Debug/net10.0/Compare_TicketApi.dll",
+      "cwd": "${workspaceFolder}/Compare_TicketApi",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "internalConsole"
+    },
+    {
+      "name": "React (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/Compare_React_TicketTracker"
+    },
+    {
+      "name": "Angular (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/Compare_Angular_TicketTracker"
+    },
+    {
+      "name": "Blazor (WASM)",
+      "type": "blazorwasm",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/Compare_Blazor_TicketTracker",
+      "url": "http://localhost:5200"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug: API + React",
+      "configurations": ["API (.NET)", "React (Edge)"]
+    },
+    {
+      "name": "Debug: API + Angular",
+      "configurations": ["API (.NET)", "Angular (Edge)"]
+    },
+    {
+      "name": "Debug: API + Blazor",
+      "configurations": ["API (.NET)", "Blazor (WASM)"]
+    }
+  ]
+}

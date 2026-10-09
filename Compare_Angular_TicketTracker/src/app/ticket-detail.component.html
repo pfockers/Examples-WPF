@@ -1,0 +1,52 @@
+@if (!ticket) {
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  } @else {
+    <p class="empty">Lade Ticket...</p>
+  }
+} @else {
+  <section class="detail">
+    <a routerLink="/">&larr; Zurueck zur Liste</a>
+    <h2>Ticket #{{ ticket.id }}</h2>
+    <p class="meta">
+      <span [class]="'priority ' + ticket.priority">{{ priorityLabel[ticket.priority] }}</span>
+      {{ statusLabel[ticket.status] }} &middot; erstellt am {{ ticket.createdAt | date: 'dd.MM.yyyy' }}
+    </p>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+    @if (saved) {
+      <p class="success">Gespeichert.</p>
+    }
+
+    <form class="stack" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <label>
+        Titel
+        <input formControlName="title" />
+        @if (form.controls.title.invalid && (form.controls.title.touched || submitted)) {
+          <span class="field-error">Titel ist erforderlich (3 bis 200 Zeichen).</span>
+        }
+      </label>
+      <label>
+        Beschreibung
+        <textarea rows="5" formControlName="description"></textarea>
+        @if (form.controls.description.invalid) {
+          <span class="field-error">Beschreibung darf hoechstens 1000 Zeichen lang sein.</span>
+        }
+      </label>
+      <label>
+        Prioritaet
+        <select formControlName="priority">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ priorityLabel[p] }}</option>
+          }
+        </select>
+      </label>
+      <div class="actions">
+        <button type="submit" class="primary">Speichern</button>
+        <button type="button" class="danger" (click)="remove()">Loeschen</button>
+      </div>
+    </form>
+  </section>
+}

@@ -1,7 +1,10 @@
 <Solution>
   <Project Path="AuthApi/AuthApi.csproj" />
   <Project Path="AuthWpfClient/AuthWpfClient.csproj" />
+  <Project Path="Compare_Blazor_TicketTracker.Tests/Compare_Blazor_TicketTracker.Tests.csproj" />
+  <Project Path="Compare_Blazor_TicketTracker/Compare_Blazor_TicketTracker.csproj" />
   <Project Path="Compare_TicketApi/Compare_TicketApi.csproj" />
+  <Project Path="Compare_TicketApi.Tests/Compare_TicketApi.Tests.csproj" />
   <Project Path="CustomWpfControl/CustomWpfControl.csproj" />
   <Project Path="DependencyInjectionWpf/DependencyInjectionWpf.csproj" />
   <Project Path="ErrorHandlingLoggingWpf/ErrorHandlingLoggingWpf.csproj" />

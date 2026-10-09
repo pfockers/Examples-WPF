@@ -1,0 +1,22 @@
+<form class="card stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <h2>Anmelden</h2>
+  <p class="hint">Demo-Zugang: demo / demo123</p>
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+  <label>
+    Benutzername
+    <input formControlName="username" autocomplete="username" />
+    @if (submitted && form.controls.username.invalid) {
+      <span class="field-error">Benutzername ist erforderlich.</span>
+    }
+  </label>
+  <label>
+    Passwort
+    <input type="password" formControlName="password" autocomplete="current-password" />
+    @if (submitted && form.controls.password.invalid) {
+      <span class="field-error">Passwort ist erforderlich.</span>
+    }
+  </label>
+  <button type="submit" class="primary" [disabled]="busy">{{ busy ? 'Anmelden...' : 'Anmelden' }}</button>
+</form>

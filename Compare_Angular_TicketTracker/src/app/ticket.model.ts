@@ -4,6 +4,7 @@ export type Status = 'open' | 'in-progress' | 'done';
 export interface Ticket {
   id: number;
   title: string;
+  description: string | null;
   priority: Priority;
   status: Status;
   createdAt: string;

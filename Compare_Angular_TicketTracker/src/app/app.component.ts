@@ -1,19 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { STATUSES, STATUS_LABEL } from './ticket.model';
-import { TicketFormComponent } from './ticket-form.component';
-import { TicketItemComponent } from './ticket-item.component';
-import { TicketService } from './ticket.service';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, TicketFormComponent, TicketItemComponent],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  service = inject(TicketService);
-
-  statuses = STATUSES;
-  statusLabel = STATUS_LABEL;
+  auth = inject(AuthService);
 }

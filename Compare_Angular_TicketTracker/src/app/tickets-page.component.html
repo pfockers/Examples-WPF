@@ -1,0 +1,52 @@
+@if (service.actionError()) {
+  <p class="error">{{ service.actionError() }}</p>
+}
+
+<div class="stats">
+  @for (s of statuses; track s) {
+    <div class="stat" [class]="'stat ' + s">
+      <strong>{{ service.count(s) }}</strong>
+      <span>{{ statusLabel[s] }}</span>
+    </div>
+  }
+</div>
+
+<app-ticket-form />
+
+<div class="toolbar">
+  <input
+    type="search"
+    placeholder="Tickets durchsuchen..."
+    [ngModel]="service.search()"
+    (ngModelChange)="service.search.set($event)"
+  />
+  <select aria-label="Filter" [ngModel]="service.filter()" (ngModelChange)="service.filter.set($event)">
+    <option value="all">Alle</option>
+    @for (s of statuses; track s) {
+      <option [value]="s">{{ statusLabel[s] }}</option>
+    }
+  </select>
+</div>
+
+@if (service.loading()) {
+  <p class="empty">Lade Tickets...</p>
+}
+@if (service.loadError()) {
+  <p class="error">
+    {{ service.loadError() }}
+    <button (click)="service.load()">Erneut versuchen</button>
+  </p>
+}
+
+<ul class="tickets">
+  @for (t of service.visible(); track t.id) {
+    <app-ticket-item
+      [ticket]="t"
+      (statusChange)="service.changeStatus(t.id, $event)"
+      (delete)="service.remove(t.id)"
+    />
+  }
+</ul>
+@if (!service.loading() && !service.loadError() && service.visible().length === 0) {
+  <p class="empty">Keine Tickets gefunden.</p>
+}

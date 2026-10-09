@@ -1,11 +1,11 @@
-<li class="ticket" [class]="'ticket ' + ticket.status">
+<li [class]="'ticket ' + ticket.status">
   <div class="ticket-main">
-    <span class="priority" [class]="'priority ' + ticket.priority">{{ priorityLabel[ticket.priority] }}</span>
-    <span class="title">{{ ticket.title }}</span>
+    <span [class]="'priority ' + ticket.priority">{{ priorityLabel[ticket.priority] }}</span>
+    <a class="title" [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a>
     <small>{{ ticket.createdAt | date: 'dd.MM.yyyy' }}</small>
   </div>
   <div class="ticket-actions">
-    <select [ngModel]="ticket.status" (ngModelChange)="statusChange.emit($event)">
+    <select aria-label="Status" [ngModel]="ticket.status" (ngModelChange)="statusChange.emit($event)">
       @for (s of statuses; track s) {
         <option [value]="s">{{ statusLabel[s] }}</option>
       }

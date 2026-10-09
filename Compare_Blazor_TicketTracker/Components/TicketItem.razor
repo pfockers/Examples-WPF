@@ -3,11 +3,11 @@
 <li class="ticket @Ticket.Status.Css()">
     <div class="ticket-main">
         <span class="priority @Ticket.Priority.Css()">@Ticket.Priority.Label()</span>
-        <span class="title">@Ticket.Title</span>
-        <small>@Ticket.CreatedAt.ToString("dd.MM.yyyy")</small>
+        <a class="title" href="tickets/@Ticket.Id">@Ticket.Title</a>
+        <small>@Ticket.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</small>
     </div>
     <div class="ticket-actions">
-        <select value="@Ticket.Status" @onchange="e => OnStatusChange.InvokeAsync(Enum.Parse<Status>(e.Value!.ToString()!))">
+        <select aria-label="Status" value="@Ticket.Status" @onchange="e => OnStatusChange.InvokeAsync(Enum.Parse<Status>(e.Value!.ToString()!))">
             @foreach (var s in TicketLabels.Statuses)
             {
                 <option value="@s">@s.Label()</option>

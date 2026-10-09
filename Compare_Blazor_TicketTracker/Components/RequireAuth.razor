@@ -1,0 +1,28 @@
+@inject AuthService Auth
+@inject NavigationManager Nav
+@implements IDisposable
+
+@* Route Guard: nicht angemeldete Benutzer landen auf /login. *@
+@if (_ready && Auth.IsLoggedIn)
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool _ready;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        Auth.Changed += OnChanged;
+        _ready = true;
+        if (!Auth.IsLoggedIn)
+            Nav.NavigateTo($"login?returnUrl={Uri.EscapeDataString(Nav.ToBaseRelativePath(Nav.Uri))}");
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Auth.Changed -= OnChanged;
+}

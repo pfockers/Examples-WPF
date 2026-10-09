@@ -1,20 +1,16 @@
-﻿@page "/"
+@page "/"
 @using Compare_Blazor_TicketTracker.Components
 @using Compare_Blazor_TicketTracker.Models
 @using Compare_Blazor_TicketTracker.Services
 @inject TicketService Service
+@inject AuthService Auth
 
 <PageTitle>Ticket Tracker</PageTitle>
 
-<div class="app">
-    <header>
-        <h1>Ticket Tracker</h1>
-        <span class="badge-tech blazor">Blazor</span>
-    </header>
-
-    @if (Service.Error != "")
+<RequireAuth>
+    @if (Service.ActionError != "")
     {
-        <p class="error">@Service.Error</p>
+        <p class="error">@Service.ActionError</p>
     }
 
     <div class="stats">
@@ -27,11 +23,11 @@
         }
     </div>
 
-    <TicketForm />
+    <TicketForm OnAdd="Service.AddAsync" />
 
     <div class="toolbar">
         <input type="search" placeholder="Tickets durchsuchen..." @bind="Service.Search" @bind:event="oninput" />
-        <select @bind="Service.Filter">
+        <select aria-label="Filter" @bind="Service.Filter">
             <option value="all">Alle</option>
             @foreach (var s in TicketLabels.Statuses)
             {
@@ -39,6 +35,15 @@
             }
         </select>
     </div>
+
+    @if (Service.Loading)
+    {
+        <p class="empty">Lade Tickets...</p>
+    }
+    @if (Service.LoadError != "")
+    {
+        <p class="error">@Service.LoadError <button @onclick="Service.LoadAsync">Erneut versuchen</button></p>
+    }
 
     <ul class="tickets">
         @foreach (var t in Service.Visible)
@@ -48,13 +53,18 @@
                         OnDelete="() => Service.RemoveAsync(t.Id)" />
         }
     </ul>
-    @if (Service.VisibleCount == 0)
+    @if (!Service.Loading && Service.LoadError == "" && Service.VisibleCount == 0)
     {
         <p class="empty">Keine Tickets gefunden.</p>
     }
-</div>
+</RequireAuth>
 
 @code {
     // Lifecycle-Methode (Gegenstueck zu useEffect/ngOnInit): einmal beim Start laden.
-    protected override Task OnInitializedAsync() => Service.LoadAsync();
+    // Wartet auf die Anmeldung, damit der erste Request das Token enthaelt.
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (Auth.IsLoggedIn) await Service.LoadAsync();
+    }
 }

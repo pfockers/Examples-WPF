@@ -1,0 +1,125 @@
+@page "/tickets/{Id:int}"
+@using Compare_Blazor_TicketTracker.Components
+@using Compare_Blazor_TicketTracker.Models
+@using Compare_Blazor_TicketTracker.Services
+@inject TicketService Service
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>Ticket #@Id</PageTitle>
+
+<RequireAuth>
+    @if (_ticket is null)
+    {
+        @if (_error != "")
+        {
+            <p class="error">@_error</p>
+        }
+        else
+        {
+            <p class="empty">Lade Ticket...</p>
+        }
+    }
+    else
+    {
+        <section class="detail">
+            <a href="">&larr; Zurueck zur Liste</a>
+            <h2>Ticket #@_ticket.Id</h2>
+            <p class="meta">
+                <span class="priority @_ticket.Priority.Css()">@_ticket.Priority.Label()</span>
+                @_ticket.Status.Label() &middot; erstellt am @_ticket.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")
+            </p>
+
+            @if (_error != "")
+            {
+                <p class="error">@_error</p>
+            }
+            @if (_saved)
+            {
+                <p class="success">Gespeichert.</p>
+            }
+
+            <EditForm Model="_model" OnValidSubmit="SaveAsync" class="stack" FormName="ticket-detail">
+                <DataAnnotationsValidator />
+                <label>
+                    Titel
+                    <InputText @bind-Value="_model.Title" />
+                    <ValidationMessage For="() => _model.Title" />
+                </label>
+                <label>
+                    Beschreibung
+                    <InputTextArea rows="5" @bind-Value="_model.Description" />
+                    <ValidationMessage For="() => _model.Description" />
+                </label>
+                <label>
+                    Prioritaet
+                    <InputSelect @bind-Value="_model.Priority">
+                        @foreach (var p in TicketLabels.Priorities)
+                        {
+                            <option value="@p">@p.Label()</option>
+                        }
+                    </InputSelect>
+                </label>
+                <div class="actions">
+                    <button type="submit" class="primary">Speichern</button>
+                    <button type="button" class="danger" @onclick="RemoveAsync">Loeschen</button>
+                </div>
+            </EditForm>
+        </section>
+    }
+</RequireAuth>
+
+@code {
+    // Route-Parameter: {Id:int} im @page und [Parameter] (Gegenstueck zu useParams bzw. @Input mit withComponentInputBinding).
+    [Parameter] public int Id { get; set; }
+
+    private Ticket? _ticket;
+    private TicketInput _model = new();
+    private string _error = "";
+    private bool _saved;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (!Auth.IsLoggedIn) return;
+        try
+        {
+            _ticket = await Service.GetAsync(Id);
+            _model = new TicketInput { Title = _ticket!.Title, Description = _ticket.Description, Priority = _ticket.Priority };
+        }
+        catch (ApiException e)
+        {
+            _error = e.Status == 404 ? "Ticket nicht gefunden." : e.Message;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        _saved = false;
+        try
+        {
+            _model.Title = _model.Title.Trim();
+            _model.Description = string.IsNullOrWhiteSpace(_model.Description) ? null : _model.Description.Trim();
+            _ticket = await Service.UpdateAsync(Id, _model);
+            _saved = true;
+            _error = "";
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+        }
+    }
+
+    private async Task RemoveAsync()
+    {
+        try
+        {
+            await Service.DeleteByIdAsync(Id);
+            Nav.NavigateTo("");
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+        }
+    }
+}

@@ -47,7 +47,18 @@ Streng genommen ist React eine **Bibliothek**, Angular und Blazor sind **Framewo
 | HTTP-Aufrufe | `fetch` (hier in `api.ts`) | `HttpClient` + Observables + `subscribe()` | `HttpClient` + `async/await` + `GetFromJsonAsync` |
 | Laden beim Start | `useEffect(..., [])` | Konstruktor des Services | `OnInitializedAsync` |
 | JSON/Enums | Strings wie `"in-progress"` direkt | Strings direkt | `JsonStringEnumConverter` nötig, um C#-Enums auf Strings abzubilden |
-| Fehlerbehandlung | `try/catch` bzw. `.catch()` | `subscribe({ error })` | `try/catch` (`HttpRequestException`) |
+| Fehlerbehandlung | `try/catch` bzw. `.catch()` | `subscribe({ error })` | `try/catch` (`ApiException`) |
+| Konfiguration (API-URL) | `.env` mit `VITE_API_URL`, Zugriff per `import.meta.env` | `environments/environment.ts` (per `fileReplacements` je Build getauscht) | `wwwroot/appsettings.json`, Zugriff per `builder.Configuration` |
+| Routing | React Router (`<Routes>`, `<Route>`) | `provideRouter(routes)`, `<router-outlet>` | `@page "/pfad"`, `<Router>` in `App.razor` |
+| Route-Parameter | `useParams()` | `@Input() id` (mit `withComponentInputBinding()`) | `{Id:int}` im `@page` + `[Parameter]` |
+| Navigation | `<Link>`, `useNavigate()` | `routerLink`, `Router.navigate()` | `<a href>`, `NavigationManager.NavigateTo()` |
+| Route Guard | `<RequireAuth>`-Komponente mit `<Navigate>` | `CanActivateFn` (`authGuard`) | `<RequireAuth>`-Komponente mit `NavigateTo()` |
+| Login-Zustand | `AuthContext` + `sessionStorage` | `AuthService` mit `signal()` + `sessionStorage` | `AuthService` (Singleton) + `sessionStorage` per JS-Interop |
+| Token an Requests anhängen | zentrale `request()`-Funktion in `api.ts` | `HttpInterceptorFn` (`auth.interceptor.ts`) | `DelegatingHandler` (`AuthHeaderHandler`) |
+| Formularvalidierung | von Hand: Fehlertext aus dem State abgeleitet | Reactive Forms: `FormBuilder` + `Validators` | `EditForm` + `DataAnnotationsValidator` + Attribute (`[Required]`, `[StringLength]`) |
+| Fehlermeldung am Feld | `{error && <span>}` | `@if (control.invalid && touched)` | `<ValidationMessage For="...">` |
+| Lade-/Fehlerzustand | `loading`/`error`-State, `.finally()` | `loading`/`loadError`-Signals | `Loading`/`LoadError`-Properties |
+| Komponententests | Vitest + Testing Library (`render`, `screen`, `userEvent`) | Jasmine/Karma + `TestBed` + `HttpTestingController` | bUnit (`Render<T>()`, `Find()`, `Change()`, `Submit()`) |
 
 ## Datenfluss und Änderungserkennung
 
@@ -64,26 +75,44 @@ Streng genommen ist React eine **Bibliothek**, Angular und Blazor sind **Framewo
 
 | React | Angular | Blazor |
 |---|---|---|
-| `main.tsx` | `main.ts` + `app.config.ts` | `Program.cs` |
-| `App.tsx` (State + Logik + View) | `ticket.service.ts` + `app.component.*` | `Services/TicketService.cs` + `Pages/Home.razor` |
+| `main.tsx` (Router + `AuthProvider`) | `main.ts` + `app.config.ts` (Router, HttpClient, Interceptor) | `Program.cs` (HttpClient, Handler, Services) |
+| `App.tsx` (Layout + Routen) | `app.component.*` + `app.routes.ts` | `Layout/MainLayout.razor` + Router in `App.razor` |
+| `TicketsPage.tsx`, `TicketDetailPage.tsx`, `LoginPage.tsx` | `tickets-page.component.*`, `ticket-detail.component.*`, `login.component.*` | `Pages/Home.razor`, `Pages/TicketDetail.razor`, `Pages/Login.razor` |
 | `TicketForm.tsx`, `TicketItem.tsx` | `ticket-form.component.*`, `ticket-item.component.*` | `Components/TicketForm.razor`, `Components/TicketItem.razor` |
+| `api.ts`, `auth.tsx`, `tokenStore.ts` | `ticket.service.ts`, `auth.service.ts`, `auth.interceptor.ts`, `auth.guard.ts` | `Services/TicketService.cs`, `Services/AuthService.cs`, `Components/RequireAuth.razor` |
 | `types.ts` | `ticket.model.ts` | `Models/Ticket.cs` |
 | `App.css` | `styles.css` | `wwwroot/css/app.css` |
-| `package.json`, `vite.config.ts` | `package.json`, `angular.json` | `*.csproj` |
-| `index.html` | `index.html` | `wwwroot/index.html` |
+| `.env`, `vite.config.ts`, `package.json` | `environments/*`, `angular.json`, `package.json` | `wwwroot/appsettings.json`, `*.csproj` |
+| `*.test.tsx` (Vitest) | `*.spec.ts` (Jasmine) | `Compare_Blazor_TicketTracker.Tests` (bUnit, xUnit) |
 
 ## Backend (`Compare_TicketApi`)
 
-Alle drei Frontends sprechen dieselbe ASP.NET-Core-Minimal-API an (`http://localhost:5300`). Die Tickets liegen in einer SQLite-Datenbank (`tickets.db`, EF Core, wird beim ersten Start angelegt und mit drei Beispiel-Tickets befüllt).
+Alle drei Frontends sprechen dieselbe ASP.NET-Core-Minimal-API an (`http://localhost:5300`). Die Tickets liegen in einer SQLite-Datenbank (`tickets.db`, EF Core, wird beim ersten Start per Migration angelegt und mit drei Beispiel-Tickets befüllt).
 
 | Methode | Pfad | Zweck |
 |---|---|---|
+| POST | `/api/auth/login` | Anmelden, liefert ein JWT (Demo-Zugang `demo` / `demo123`) |
 | GET | `/api/tickets` | Alle Tickets laden |
-| POST | `/api/tickets` | Ticket anlegen (`title`, `priority`) |
+| GET | `/api/tickets/{id}` | Einzelnes Ticket |
+| POST | `/api/tickets` | Ticket anlegen (`title`, `description`, `priority`) |
+| PUT | `/api/tickets/{id}` | Titel, Beschreibung, Priorität ändern |
 | PUT | `/api/tickets/{id}/status` | Status ändern (`status`) |
 | DELETE | `/api/tickets/{id}` | Ticket löschen |
 
-Suche und Filter laufen weiterhin im Frontend. Die Frontends unterscheiden sich nur darin, **wie** sie die API aufrufen und das Ergebnis in ihren Zustand übernehmen (siehe Tabelle oben). Beim Blazor-Client sind die Modelle in C# nachgebaut; da Frontend und Backend beide .NET sind, könnten sie sich in einem gemeinsamen Projekt dieselben Klassen teilen. Bei React/Angular müssen die TypeScript-Typen manuell synchron gehalten werden.
+Alle `/api/tickets`-Endpunkte erfordern ein gültiges Token (`Authorization: Bearer ...`), sonst antwortet die API mit 401.
+
+**Was das Backend zusätzlich zeigt**
+
+- **Konfiguration:** Port, CORS-Ursprünge, Connection-String und JWT-Einstellungen stehen in `appsettings.json`. Der JWT-Schlüssel steht nur in `appsettings.Development.json` (nur für die Entwicklung; in echten Umgebungen per User-Secrets oder Umgebungsvariable `Jwt__Key`).
+- **Migrationen:** `Migrations/` (EF Core); neue Änderungen mit `dotnet ef migrations add <Name> --project Compare_TicketApi`.
+- **DTOs:** Die API gibt `TicketDto` zurück, nicht die Datenbank-Entität `Ticket`.
+- **Validierung:** DataAnnotations auf den Request-Typen (`AddValidation()`), Fehler als `ProblemDetails` mit Status 400.
+- **OpenAPI:** Beschreibung unter `/openapi/v1.json`, Oberfläche (Scalar) unter `/scalar` (nur in Development).
+- **Tests:** `Compare_TicketApi.Tests` (xUnit, `WebApplicationFactory`, eigene SQLite-Datei pro Testlauf).
+
+Suche und Filter laufen weiterhin im Frontend. Die Frontends unterscheiden sich darin, **wie** sie die API aufrufen, das Token anhängen und das Ergebnis in ihren Zustand übernehmen (siehe Tabelle oben). Beim Blazor-Client sind die Modelle in C# nachgebaut; da Frontend und Backend beide .NET sind, könnten sie sich in einem gemeinsamen Projekt dieselben Klassen teilen. Bei React/Angular müssen die TypeScript-Typen manuell synchron gehalten werden.
+
+**Bewusste Vereinfachungen** (nicht für Produktion): Der Demo-Benutzer steht in der Konfiguration (echte Projekte: Benutzer-Datenbank und Passwort-Hashing, z. B. ASP.NET Identity). Das Token liegt in `sessionStorage` und ist damit für Skripte auf der Seite lesbar (XSS-Risiko; Alternative: HttpOnly-Cookie).
 
 ## Wann was?
 
@@ -106,3 +135,18 @@ cd Compare_Angular_TicketTracker; npm install; npx ng serve  # http://localhost:
 # Blazor
 cd Compare_Blazor_TicketTracker; dotnet run --urls http://localhost:5200
 ```
+
+Anmeldung in allen Frontends: **demo / demo123**.
+
+**Tests**
+
+```powershell
+dotnet test Compare_TicketApi.Tests
+dotnet test Compare_Blazor_TicketTracker.Tests
+cd Compare_React_TicketTracker; npm test
+cd Compare_Angular_TicketTracker; npx ng test --watch=false --browsers=ChromeHeadless
+```
+
+Die Angular-Tests brauchen einen Chromium-Browser. Ist kein Chrome installiert, kann Edge genutzt werden: `$env:CHROME_BIN = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"` vor dem Aufruf setzen.
+
+**VS Code:** `Terminal > Run Task` bietet `Start all (API + React + Angular + Blazor)` und `Test all`; unter `Run and Debug` gibt es Compound-Konfigurationen wie `Debug: API + React` (Frontend-Server vorher per Task starten).

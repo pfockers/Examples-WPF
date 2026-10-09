@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { PRIORITY_LABEL, STATUSES, STATUS_LABEL, Status, Ticket } from './ticket.model';
 
 @Component({
   selector: 'app-ticket-item',
   standalone: true,
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, RouterLink],
   templateUrl: './ticket-item.component.html',
 })
 export class TicketItemComponent {

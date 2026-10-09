@@ -1,0 +1,56 @@
+@page "/login"
+@using Compare_Blazor_TicketTracker.Models
+@using Compare_Blazor_TicketTracker.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>Anmelden</PageTitle>
+
+<EditForm Model="_model" OnValidSubmit="SubmitAsync" class="card stack" FormName="login">
+    <DataAnnotationsValidator />
+    <h2>Anmelden</h2>
+    <p class="hint">Demo-Zugang: demo / demo123</p>
+    @if (_error != "")
+    {
+        <p class="error">@_error</p>
+    }
+    <label>
+        Benutzername
+        <InputText @bind-Value="_model.Username" autocomplete="username" />
+        <ValidationMessage For="() => _model.Username" />
+    </label>
+    <label>
+        Passwort
+        <InputText type="password" @bind-Value="_model.Password" autocomplete="current-password" />
+        <ValidationMessage For="() => _model.Password" />
+    </label>
+    <button type="submit" class="primary" disabled="@_busy">@(_busy ? "Anmelden..." : "Anmelden")</button>
+</EditForm>
+
+@code {
+    // Query-Parameter ?returnUrl=... (Gegenstueck zu useLocation().state bzw. queryParams).
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
+
+    private readonly LoginInput _model = new();
+    private string _error = "";
+    private bool _busy;
+
+    private async Task SubmitAsync()
+    {
+        _busy = true;
+        _error = "";
+        try
+        {
+            await Auth.LoginAsync(_model.Username.Trim(), _model.Password);
+            Nav.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "" : ReturnUrl);
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

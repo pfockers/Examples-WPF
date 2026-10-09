@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { PRIORITY_LABEL, STATUS_LABEL, Status, Ticket } from './types';
 
 type Props = {
@@ -11,11 +12,14 @@ export default function TicketItem({ ticket, onStatusChange, onDelete }: Props) 
     <li className={`ticket ${ticket.status}`}>
       <div className="ticket-main">
         <span className={`priority ${ticket.priority}`}>{PRIORITY_LABEL[ticket.priority]}</span>
-        <span className="title">{ticket.title}</span>
+        <Link className="title" to={`/tickets/${ticket.id}`}>
+          {ticket.title}
+        </Link>
         <small>{new Date(ticket.createdAt).toLocaleDateString('de-DE')}</small>
       </div>
       <div className="ticket-actions">
         <select
+          aria-label="Status"
           value={ticket.status}
           onChange={(e) => onStatusChange(ticket.id, e.target.value as Status)}
         >
